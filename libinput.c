@@ -1222,6 +1222,15 @@ device_has_cap(struct libinput_device *device,
 	case LIBINPUT_DEVICE_CAP_GESTURE:
 		capability = "CAP_GESTURE";
 		break;
+	case LIBINPUT_DEVICE_CAP_TABLET_TOOL:
+		capability = "CAP_TABLET_TOOL";
+		break;
+	case LIBINPUT_DEVICE_CAP_TABLET_PAD:
+		capability = "CAP_TABLET_PAD";
+		break;
+	case LIBINPUT_DEVICE_CAP_SWITCH:
+		capability = "CAP_SWITCH";
+		break;
 	}
 
 	log_bug_libinput(device->seat->libinput,
@@ -1726,7 +1735,7 @@ LIBINPUT_EXPORT enum libinput_config_status
 libinput_device_config_send_events_set_mode(struct libinput_device *device,
 	uint32_t mode)
 {
-	return LIBINPUT_CONFIG_SEND_EVENTS_ENABLED;
+	return LIBINPUT_CONFIG_STATUS_SUCCESS;
 }
 
 LIBINPUT_EXPORT uint32_t
