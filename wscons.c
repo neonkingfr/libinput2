@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <string.h>
+#include <time.h>
 
 #include <dev/wscons/wsconsio.h>
 

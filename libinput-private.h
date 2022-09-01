@@ -25,7 +25,8 @@
 #ifndef LIBINPUT_PRIVATE_H
 #define LIBINPUT_PRIVATE_H
 
-#include "linux/input.h"
+#include "libinput.h"
+#include "input.h"
 
 struct libinput_source;
 
