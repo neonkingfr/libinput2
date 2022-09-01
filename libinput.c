@@ -1416,6 +1416,7 @@ libinput_get_user_data(struct libinput *libinput)
 LIBINPUT_EXPORT int
 libinput_resume(struct libinput *libinput)
 {
+	return 0; // XXX
 }
 
 LIBINPUT_EXPORT void
@@ -1613,12 +1614,14 @@ LIBINPUT_EXPORT struct libinput_device_group *
 libinput_device_group_ref(struct libinput_device_group *group)
 {
 	assert(group == NULL);
+	return NULL; // XXX
 }
 
 LIBINPUT_EXPORT struct libinput_device_group *
 libinput_device_group_unref(struct libinput_device_group *group)
 {
 	assert(group == NULL);
+	return NULL; // XXX
 }
 
 LIBINPUT_EXPORT void
@@ -1632,6 +1635,7 @@ LIBINPUT_EXPORT void *
 libinput_device_group_get_user_data(struct libinput_device_group *group)
 {
 	assert(group == NULL);
+	return NULL; // XXX
 }
 
 LIBINPUT_EXPORT const char *
