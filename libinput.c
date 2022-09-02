@@ -1988,3 +1988,35 @@ libinput_device_config_dwt_get_default_enabled(struct libinput_device *device)
 {
 	return LIBINPUT_CONFIG_DWT_DISABLED;
 }
+
+LIBINPUT_EXPORT int
+libinput_device_tablet_pad_get_num_rings(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT int
+libinput_device_tablet_pad_get_num_strips(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT int
+libinput_device_tablet_pad_get_num_mode_groups(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT struct libinput_tablet_pad_mode_group*
+libinput_device_tablet_pad_get_mode_group(struct libinput_device *device,
+					  unsigned int index)
+{
+	return NULL;
+}
+
+LIBINPUT_EXPORT unsigned int
+libinput_tablet_pad_mode_group_get_mode(struct libinput_tablet_pad_mode_group *group)
+{
+	return 0;
+}
+
