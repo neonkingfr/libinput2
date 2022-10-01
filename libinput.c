@@ -1990,6 +1990,12 @@ libinput_device_config_dwt_get_default_enabled(struct libinput_device *device)
 }
 
 LIBINPUT_EXPORT int
+libinput_device_tablet_pad_get_num_buttons(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT int
 libinput_device_tablet_pad_get_num_rings(struct libinput_device *device)
 {
 	return 0;

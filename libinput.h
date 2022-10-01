@@ -4383,6 +4383,23 @@ libinput_device_tablet_pad_get_num_buttons(struct libinput_device *device);
 /**
  * @ingroup device
  *
+ * Return the number of buttons on a device with the
+ * @ref LIBINPUT_DEVICE_CAP_TABLET_PAD capability.
+ * Buttons on a pad device are numbered sequentially, see the
+ * libinput documentation for details.
+ *
+ * @param device A current input device
+ *
+ * @return The number of buttons supported by the device.
+ *
+ * @since 1.3
+ */
+int
+libinput_device_tablet_pad_get_num_buttons(struct libinput_device *device);
+
+/**
+ * @ingroup device
+ *
  * Return the number of rings a device with the @ref
  * LIBINPUT_DEVICE_CAP_TABLET_PAD capability provides.
  *
