@@ -185,4 +185,10 @@ pointer_notify_button(struct libinput_device *device,
 		      int32_t button,
 		      enum libinput_button_state state);
 
+void
+post_device_event(struct libinput_device *device,
+		  uint64_t time,
+		  enum libinput_event_type type,
+		  struct libinput_event *event);
+
 #endif /* LIBINPUT_PRIVATE_H */

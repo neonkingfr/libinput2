@@ -1189,7 +1189,7 @@ init_event_base(struct libinput_event *event,
 	event->device = device;
 }
 
-static void
+void
 post_device_event(struct libinput_device *device,
 		  uint64_t time,
 		  enum libinput_event_type type,
