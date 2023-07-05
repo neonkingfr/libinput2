@@ -148,18 +148,46 @@ struct libinput *
 libinput_udev_create_context(const struct libinput_interface *interface,
 	void *user_data, struct udev *udev)
 {
-	/*
-	 * We do not support udev, hence creating a context from udev will
-	 * fail.
-	 */
-	return NULL;
+	struct libinput *libinput;
+
+	fprintf(stderr, "XXXX\n");
+	libinput = calloc(1, sizeof(*libinput));
+	if (libinput == NULL)
+		return NULL;
+
+	if (libinput_init(libinput, interface, user_data) != 0) {
+		free(libinput);
+		return NULL;
+	}
+	return libinput;
 }
 
 int
 libinput_udev_assign_seat(struct libinput *libinput, const char *seat_id)
 {
-	/* Multiseat and udev are not supported. */
-	return -1;
+
+	struct libinput_seat *seat;
+	struct libinput_device *device;
+	uint64_t time;
+	struct timespec ts;
+	struct libinput_event *event;
+
+	/* Add standard muxes */
+	libinput_path_add_device(libinput, "/dev/wskbd");
+	fprintf(stderr, "added wskbd\n");
+	libinput_path_add_device(libinput, "/dev/wsmouse");
+	fprintf(stderr, "added wsmouse\n");
+
+	seat = wscons_seat_get(libinput, default_seat, default_seat_name);
+	list_for_each(device, &seat->devices_list, link) {
+		fprintf(stderr, "   %s\n", device->devname);
+		clock_gettime(CLOCK_REALTIME, &ts);
+		time = s2us(ts.tv_sec) + ns2us(ts.tv_nsec);
+		event = calloc(1, sizeof(*event));
+		post_device_event(device, time, LIBINPUT_EVENT_DEVICE_ADDED,
+		    event);
+	}
+	return 0;
 }
 
 
