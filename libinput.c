@@ -1196,7 +1196,7 @@ post_device_event(struct libinput_device *device,
 		  struct libinput_event *event)
 {
 	init_event_base(event, device, type);
-
+	fprintf(stderr, "   %s: %s %p %p\n", __func__, device->devname, event, event->device);
 	libinput_post_event(device->seat->libinput, event);
 }
 
@@ -1385,6 +1385,7 @@ libinput_get_event(struct libinput *libinput)
 		(libinput->events_out + 1) % libinput->events_len;
 	libinput->events_count--;
 
+	fprintf(stderr, "%s: %p %p\n", __func__, event, event->device);
 	return event;
 }
 
