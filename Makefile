@@ -8,8 +8,9 @@ NOPROFILE=
 
 LIB=		input
 
-INCSDIR=	/usr/local/include/
-LIBDIR=		/usr/local/lib
+PREFIX=		/usr/local
+INCSDIR=	${PREFIX}/include/
+LIBDIR=		${PREFIX}/lib
 
 CPPFLAGS+=	-I${.CURDIR} \
 		-I${.CURDIR}/include \
@@ -33,6 +34,31 @@ includes: _SUBDIRUSE
 	@test -d ${DESTDIR}${INCSDIR}/linux || \
 	    mkdir ${DESTDIR}${INCSDIR}/linux
 	cd ${.CURDIR}/include; pax -rwv linux ${DESTDIR}${INCSDIR}/
+
+# pkgconfig
+PKGCONFIG = libinput.pc
+
+.SUFFIXES: .in .pc
+
+all: ${PKGCONFIG}
+
+CLEANFILES += ${PKGCONFIG}
+
+${PKGCONFIG}: ${PKGCONFIG}.in
+	@sed -e 's#@prefix@#${PREFIX}#g' \
+	    -e 's#@datarootdir@#$${prefix}/share#g' \
+	    -e 's#@datadir@#$${datarootdir}#g' \
+	    -e 's#@exec_prefix@#$${prefix}#g' \
+	    -e 's#@libdir@#$${exec_prefix}/lib#g' \
+	    -e 's#@includedir@#$${prefix}/include#g' \
+	    -e 's#@PACKAGE_VERSION@#'${PACKAGE_VERSION}'#g' \
+	    ${EXTRA_PKGCONFIG_SUBST} \
+	< $? > $@
+
+install-pc: ${PKGCONFIG}
+	${INSTALL_DATA} ${PKGCONFIG} ${DESTDIR}${LIBDIR}/pkgconfig
+
+realinstall: install-pc
 
 .include <bsd.obj.mk>
 .include <bsd.lib.mk>
