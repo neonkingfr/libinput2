@@ -2,7 +2,7 @@
 
 INSTALL_DATA=	/usr/bin/install -c -m 644
 
-PACKAGE_VERSION=	0.21.0
+PACKAGE_VERSION=	1.21.0
 
 NOPROFILE=
 
@@ -14,7 +14,7 @@ LIBDIR=		${PREFIX}/lib
 
 CPPFLAGS+=	-I${.CURDIR} \
 		-I${.CURDIR}/include \
-
+		-I${.CURDIR}/include/linux
 
 INCS= 		libinput.h
 SRCS=		libinput.c libinput-util.c wscons.c
@@ -44,13 +44,12 @@ includes: _SUBDIRUSE
 # pkgconfig
 PKGCONFIG = libinput.pc
 
-.SUFFIXES: .in .pc
-
 all: ${PKGCONFIG}
 
 CLEANFILES += ${PKGCONFIG}
 
-${PKGCONFIG}: ${PKGCONFIG}.in
+${PKGCONFIG}: ${PKGCONFIG}.in Makefile
+	@echo "Creating ${PKGCONFIG}"
 	@sed -e 's#@prefix@#${PREFIX}#g' \
 	    -e 's#@datarootdir@#$${prefix}/share#g' \
 	    -e 's#@datadir@#$${datarootdir}#g' \
@@ -59,7 +58,7 @@ ${PKGCONFIG}: ${PKGCONFIG}.in
 	    -e 's#@includedir@#$${prefix}/include#g' \
 	    -e 's#@PACKAGE_VERSION@#'${PACKAGE_VERSION}'#g' \
 	    ${EXTRA_PKGCONFIG_SUBST} \
-	< $? > $@
+	< ${.CURDIR}/${PKGCONFIG}.in > $@
 
 install-pc: ${PKGCONFIG}
 	${INSTALL_DATA} ${PKGCONFIG} ${DESTDIR}${LIBDIR}/pkgconfig
