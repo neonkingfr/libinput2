@@ -21,7 +21,7 @@ SRCS=		libinput.c libinput-util.c wscons.c
 PKGCONFIG=	libinput.pc
 
 LINUX_INCS=	input.h \
-		freebsd/input-event-codes.h \
+		input-event-codes.h \
 		freebsd/input.h
 
 includes: _SUBDIRUSE
@@ -33,7 +33,13 @@ includes: _SUBDIRUSE
 	done
 	@test -d ${DESTDIR}${INCSDIR}/linux || \
 	    mkdir ${DESTDIR}${INCSDIR}/linux
-	cd ${.CURDIR}/include; pax -rwv linux ${DESTDIR}${INCSDIR}/
+	cd ${.CURDIR}/include/linux; for i in ${LINUX_INCS}; do \
+	    j="cmp -s $$i ${DESTDIR}${INCSDIR}/linux/$$i || \
+		${INSTALL_DATA} $$i ${DESTDIR}${INCSDIR}/linux/"; \
+		echo "\tinstalling $$i"; \
+		eval "$$j"; \
+	done
+
 
 # pkgconfig
 PKGCONFIG = libinput.pc
