@@ -191,4 +191,10 @@ post_device_event(struct libinput_device *device,
 		  enum libinput_event_type type,
 		  struct libinput_event *event);
 
+void
+libinput_seat_init(struct libinput_seat *seat,
+		   struct libinput *libinput,
+		   const char *physical_name,
+		   const char *logical_name);
+
 #endif /* LIBINPUT_PRIVATE_H */
