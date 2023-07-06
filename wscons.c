@@ -126,6 +126,7 @@ wscons_seat_get(struct libinput *libinput, const char *seat_name_physical,
 {
 	struct libinput_seat *seat;
 
+	fprintf(stderr, "%s: %d\n", __func__, __LINE__);
 	list_for_each(seat, &libinput->seat_list, link) {
 		if (streq(seat->physical_name, seat_name_physical) &&
 		    streq(seat->logical_name, seat_name_logical)) {
@@ -144,7 +145,7 @@ wscons_seat_get(struct libinput *libinput, const char *seat_name_physical,
 	return seat;
 }
 
-struct libinput *
+LIBINPUT_EXPORT struct libinput *
 libinput_udev_create_context(const struct libinput_interface *interface,
 	void *user_data, struct udev *udev)
 {
@@ -162,7 +163,7 @@ libinput_udev_create_context(const struct libinput_interface *interface,
 	return libinput;
 }
 
-int
+LIBINPUT_EXPORT int
 libinput_udev_assign_seat(struct libinput *libinput, const char *seat_id)
 {
 

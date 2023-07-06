@@ -16,6 +16,8 @@ CPPFLAGS+=	-I${.CURDIR} \
 		-I${.CURDIR}/include \
 		-I${.CURDIR}/include/linux
 
+CFLAGS=		-fvisibility=hidden -O0 -g
+
 INCS= 		libinput.h
 SRCS=		libinput.c libinput-util.c wscons.c
 PKGCONFIG=	libinput.pc

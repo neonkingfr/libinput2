@@ -1076,7 +1076,7 @@ libinput_device_init(struct libinput_device *device,
 	device->refcount = 1;
 }
 
-struct libinput_device *
+LIBINPUT_EXPORT struct libinput_device *
 libinput_device_ref(struct libinput_device *device)
 {
 	device->refcount++;
@@ -1091,7 +1091,7 @@ libinput_device_destroy(struct libinput_device *device)
 	free(device);
 }
 
-struct libinput_device *
+LIBINPUT_EXPORT struct libinput_device *
 libinput_device_unref(struct libinput_device *device)
 {
 	assert(device->refcount > 0);
@@ -1104,13 +1104,13 @@ libinput_device_unref(struct libinput_device *device)
 	}
 }
 
-int
+LIBINPUT_EXPORT int
 libinput_get_fd(struct libinput *libinput)
 {
 	return libinput->kq;
 }
 
-int
+LIBINPUT_EXPORT  int
 libinput_dispatch(struct libinput *libinput)
 {
 	struct libinput_source *source;
@@ -2294,3 +2294,97 @@ libinput_device_config_tap_get_default_button_map(struct libinput_device *device
 {
 	return 0;
 }
+
+LIBINPUT_EXPORT enum libinput_config_tap_button_map
+libinput_device_config_tap_get_button_map(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT enum libinput_config_drag_state
+libinput_device_config_tap_get_drag_enabled(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT enum libinput_config_accel_profile
+libinput_device_config_accel_get_profile(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT enum libinput_config_scroll_button_lock_state
+libinput_device_config_scroll_get_button_lock(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT int
+libinput_device_config_dwtp_is_available(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT enum libinput_config_dwtp_state
+libinput_device_config_dwtp_get_enabled(struct libinput_device *device)
+{
+	return LIBINPUT_CONFIG_DWTP_DISABLED;
+}
+
+LIBINPUT_EXPORT int
+libinput_device_config_rotation_is_available(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT unsigned int
+libinput_device_config_rotation_get_angle(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT enum libinput_config_status
+libinput_device_config_rotation_set_angle(struct libinput_device *device,
+    unsigned int  degrees)
+{
+	return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
+}
+LIBINPUT_EXPORT enum libinput_config_status
+libinput_device_config_scroll_set_button_lock(struct libinput_device *device,
+    enum libinput_config_scroll_button_lock_state state)
+{
+	return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
+}
+
+LIBINPUT_EXPORT enum libinput_config_status
+libinput_device_config_dwtp_set_enabled(struct libinput_device *device,
+    enum libinput_config_dwtp_state enable)
+{
+	return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
+}
+
+LIBINPUT_EXPORT enum libinput_config_drag_state
+libinput_device_config_tap_get_default_drag_enabled(struct libinput_device *device)
+{
+	return LIBINPUT_CONFIG_DRAG_DISABLED;
+}
+
+LIBINPUT_EXPORT unsigned int
+libinput_device_config_rotation_get_default_angle(struct libinput_device *device)
+{
+	return 0;
+}
+
+LIBINPUT_EXPORT enum libinput_config_accel_profile
+libinput_device_config_accel_get_default_profile(struct libinput_device *device)
+{
+	return LIBINPUT_CONFIG_ACCEL_PROFILE_NONE;
+}
+
+LIBINPUT_EXPORT enum libinput_config_dwtp_state
+libinput_device_config_dwtp_get_default_enabled(struct libinput_device *device)
+{
+	return LIBINPUT_CONFIG_DWTP_DISABLED;
+}
+
+
