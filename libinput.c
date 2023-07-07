@@ -1196,7 +1196,6 @@ post_device_event(struct libinput_device *device,
 		  struct libinput_event *event)
 {
 	init_event_base(event, device, type);
-	fprintf(stderr, "   %s: %s %p %p\n", __func__, device->devname, event, event->device);
 	libinput_post_event(device->seat->libinput, event);
 }
 
@@ -1265,7 +1264,6 @@ keyboard_notify_key(struct libinput_device *device,
 		.state = state,
 		.seat_key_count = seat_key_count,
 	};
-
 	post_device_event(device, time,
 			  LIBINPUT_EVENT_KEYBOARD_KEY,
 			  &key_event->base);
