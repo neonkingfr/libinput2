@@ -36,6 +36,64 @@
 
 static const char default_seat[] = "seat0";
 static const char default_seat_name[] = "default";
+	
+static void
+wscons_print_event(struct wscons_event *event)
+{
+	switch (event->type) {
+	case WSCONS_EVENT_KEY_UP:
+		printf("WSCONS_EVENT_KEY_UP 0x%x\n", event->value);
+		break;
+	case WSCONS_EVENT_KEY_DOWN:
+		printf("WSCONS_EVENT_KEY_DOWN 0x%x\n", event->value);
+		break;
+	case WSCONS_EVENT_ALL_KEYS_UP:
+		printf("WSCONS_EVENT_ALL_KEYS_UP\n");
+		break;
+	case WSCONS_EVENT_MOUSE_UP:
+		printf("MOUSE_UP: 0x%x\n", event->value);
+		break;
+	case WSCONS_EVENT_MOUSE_DOWN:
+		printf("MOUSE_DOWN: 0x%x\n", event->value);
+		break;
+	case WSCONS_EVENT_MOUSE_DELTA_X:
+		printf("MOUSE_DELTA_X: %d\n", event->value);
+		break;
+	case WSCONS_EVENT_MOUSE_DELTA_Y:
+		printf("MOUSE_DELTA_Y: %d\n", event->value);
+		break;
+		#ifdef WSCONS_EVENT_MOUSE_DELTA_Z
+	case WSCONS_EVENT_MOUSE_DELTA_Z:
+		printf("MOUSE_DELTA_Z: %d\n", event->value);
+		break;
+	case WSCONS_EVENT_MOUSE_ABSOLUTE_Z:
+		printf("MOUSE_ABSOLUTE_Z: %d\n", event->value);
+		break;
+		#endif
+	case WSCONS_EVENT_MOUSE_ABSOLUTE_X:
+		printf("MOUSE_ABSOLUTE_X: %d\n", event->value);
+		break;
+	case WSCONS_EVENT_MOUSE_ABSOLUTE_Y:
+		printf("MOUSE_ABSOLUTE_Y: %d\n", event->value);
+		break;
+	case WSCONS_EVENT_MOUSE_DELTA_W:
+		printf("WSCONS_EVENT_MOUSE_DELTA_W %d\n", event->value);
+		break;
+	case WSCONS_EVENT_MOUSE_ABSOLUTE_W:
+		printf("WSCONS_EVENT_MOUSE_ABSOLUTE_W %d\n", event->value);
+		break;
+	case WSCONS_EVENT_SYNC:
+		printf("SYNC\n");
+		break;
+	default:
+		printf("unknown event type 0x%x, value 0x%x\n",
+		    event->type, event->value);
+	}
+}
+
+extern uint32_t wskey_transcode(int);
+
+static int old_value = -1;
 
 static void
 wscons_process(struct libinput_device *device, struct wscons_event *wsevent)
@@ -46,17 +104,26 @@ wscons_process(struct libinput_device *device, struct wscons_event *wsevent)
 	uint64_t time;
 	int button, key;
 
+	printf("%s: event type %x %x\n", __func__, wsevent->type, wsevent->value);
+	wscons_print_event(wsevent);
+
 	time = s2us(wsevent->time.tv_sec) + ns2us(wsevent->time.tv_nsec);
 
 	switch (wsevent->type) {
 	case WSCONS_EVENT_KEY_UP:
 	case WSCONS_EVENT_KEY_DOWN:
 		key = wsevent->value;
-		if (wsevent->type == WSCONS_EVENT_KEY_UP)
+		if (wsevent->type == WSCONS_EVENT_KEY_UP) {
 			state = LIBINPUT_KEY_STATE_RELEASED;
-		else
+			old_value = -1;
+		} else {
 			state = LIBINPUT_KEY_STATE_PRESSED;
-		keyboard_notify_key(device, time, key, state);
+			/* ignore auto-repeat */
+			if (key == old_value)
+				return;
+			old_value = key;
+		}
+		keyboard_notify_key(device, time, wskey_transcode(key), state);
 		break;
 
 	case WSCONS_EVENT_MOUSE_UP:
@@ -96,7 +163,12 @@ wscons_process(struct libinput_device *device, struct wscons_event *wsevent)
 
 	case WSCONS_EVENT_MOUSE_ABSOLUTE_Z:
 	case WSCONS_EVENT_MOUSE_ABSOLUTE_W:
+	case WSCONS_EVENT_HSCROLL:
+	case WSCONS_EVENT_VSCROLL:
+	case WSCONS_EVENT_TOUCH_WIDTH:
+	case WSCONS_EVENT_TOUCH_RESET:
 		/* ignore those */
+		break;
 	default:
 		assert(1 == 0);
 	}

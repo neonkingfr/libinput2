@@ -19,7 +19,7 @@ CPPFLAGS+=	-I${.CURDIR} \
 CFLAGS=		-fvisibility=hidden -O0 -g
 
 INCS= 		libinput.h
-SRCS=		libinput.c libinput-util.c wscons.c
+SRCS=		libinput.c libinput-util.c wscons.c wskbdmap.c
 PKGCONFIG=	libinput.pc
 
 LINUX_INCS=	input.h \
