@@ -1382,8 +1382,6 @@ libinput_get_event(struct libinput *libinput)
 	libinput->events_out =
 		(libinput->events_out + 1) % libinput->events_len;
 	libinput->events_count--;
-
-	fprintf(stderr, "%s: %p %p\n", __func__, event, event->device);
 	return event;
 }
 

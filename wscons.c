@@ -33,64 +33,9 @@
 #include "libinput-util.h"
 #include "libinput-private.h"
 
-
 static const char default_seat[] = "seat0";
 static const char default_seat_name[] = "default";
 	
-static void
-wscons_print_event(struct wscons_event *event)
-{
-	switch (event->type) {
-	case WSCONS_EVENT_KEY_UP:
-		printf("WSCONS_EVENT_KEY_UP 0x%x\n", event->value);
-		break;
-	case WSCONS_EVENT_KEY_DOWN:
-		printf("WSCONS_EVENT_KEY_DOWN 0x%x\n", event->value);
-		break;
-	case WSCONS_EVENT_ALL_KEYS_UP:
-		printf("WSCONS_EVENT_ALL_KEYS_UP\n");
-		break;
-	case WSCONS_EVENT_MOUSE_UP:
-		printf("MOUSE_UP: 0x%x\n", event->value);
-		break;
-	case WSCONS_EVENT_MOUSE_DOWN:
-		printf("MOUSE_DOWN: 0x%x\n", event->value);
-		break;
-	case WSCONS_EVENT_MOUSE_DELTA_X:
-		printf("MOUSE_DELTA_X: %d\n", event->value);
-		break;
-	case WSCONS_EVENT_MOUSE_DELTA_Y:
-		printf("MOUSE_DELTA_Y: %d\n", event->value);
-		break;
-		#ifdef WSCONS_EVENT_MOUSE_DELTA_Z
-	case WSCONS_EVENT_MOUSE_DELTA_Z:
-		printf("MOUSE_DELTA_Z: %d\n", event->value);
-		break;
-	case WSCONS_EVENT_MOUSE_ABSOLUTE_Z:
-		printf("MOUSE_ABSOLUTE_Z: %d\n", event->value);
-		break;
-		#endif
-	case WSCONS_EVENT_MOUSE_ABSOLUTE_X:
-		printf("MOUSE_ABSOLUTE_X: %d\n", event->value);
-		break;
-	case WSCONS_EVENT_MOUSE_ABSOLUTE_Y:
-		printf("MOUSE_ABSOLUTE_Y: %d\n", event->value);
-		break;
-	case WSCONS_EVENT_MOUSE_DELTA_W:
-		printf("WSCONS_EVENT_MOUSE_DELTA_W %d\n", event->value);
-		break;
-	case WSCONS_EVENT_MOUSE_ABSOLUTE_W:
-		printf("WSCONS_EVENT_MOUSE_ABSOLUTE_W %d\n", event->value);
-		break;
-	case WSCONS_EVENT_SYNC:
-		printf("SYNC\n");
-		break;
-	default:
-		printf("unknown event type 0x%x, value 0x%x\n",
-		    event->type, event->value);
-	}
-}
-
 extern uint32_t wskey_transcode(int);
 
 static int old_value = -1;
@@ -103,9 +48,6 @@ wscons_process(struct libinput_device *device, struct wscons_event *wsevent)
 	struct device_float_coords raw;
 	uint64_t time;
 	int button, key;
-
-	printf("%s: event type %x %x\n", __func__, wsevent->type, wsevent->value);
-	wscons_print_event(wsevent);
 
 	time = s2us(wsevent->time.tv_sec) + ns2us(wsevent->time.tv_nsec);
 
@@ -223,7 +165,7 @@ libinput_udev_create_context(const struct libinput_interface *interface,
 {
 	struct libinput *libinput;
 
-	fprintf(stderr, "XXXX\n");
+	fprintf(stderr, "%s: %d\n", __func__, __LINE__);
 	libinput = calloc(1, sizeof(*libinput));
 	if (libinput == NULL)
 		return NULL;
@@ -245,11 +187,11 @@ libinput_udev_assign_seat(struct libinput *libinput, const char *seat_id)
 	struct timespec ts;
 	struct libinput_event *event;
 
+	fprintf(stderr, "%s: %d\n", __func__, __LINE__);
+
 	/* Add standard muxes */
 	libinput_path_add_device(libinput, "/dev/wskbd");
-	fprintf(stderr, "added wskbd\n");
 	libinput_path_add_device(libinput, "/dev/wsmouse");
-	fprintf(stderr, "added wsmouse\n");
 
 	seat = wscons_seat_get(libinput, default_seat, default_seat_name);
 	list_for_each(device, &seat->devices_list, link) {
