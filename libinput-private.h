@@ -53,6 +53,11 @@ struct discrete_coords {
 	int x, y;
 };
 
+/* A pair of wheel click data for the 120-normalized range */
+struct wheel_v120 {
+	int x, y;
+};
+
 struct libinput {
 	int kq;
 	struct list source_destroy_list;
@@ -172,6 +177,12 @@ keyboard_notify_key(struct libinput_device *device,
 		    uint64_t time,
 		    uint32_t key,
 		    enum libinput_key_state state);
+
+void
+axis_notify_event(struct libinput_device *device,
+    uint64_t time,
+    const struct normalized_coords *delta,
+    const struct device_float_coords *raw);
 
 void
 pointer_notify_motion(struct libinput_device *device,

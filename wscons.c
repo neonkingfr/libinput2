@@ -100,13 +100,20 @@ wscons_process(struct libinput_device *device, struct wscons_event *wsevent)
 	case WSCONS_EVENT_MOUSE_ABSOLUTE_Y:
 		//return LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE;
 
+	case WSCONS_EVENT_HSCROLL:
+		break;
+	case WSCONS_EVENT_VSCROLL:
+		memset(&raw, 0, sizeof(raw));
+		accel.y = wsevent->value;
+		accel.x = wsevent->value;
+		axis_notify_event(device, time, &accel, &raw);
+		break;
+	      
 	case WSCONS_EVENT_SYNC:
 		break;
 
 	case WSCONS_EVENT_MOUSE_ABSOLUTE_Z:
 	case WSCONS_EVENT_MOUSE_ABSOLUTE_W:
-	case WSCONS_EVENT_HSCROLL:
-	case WSCONS_EVENT_VSCROLL:
 	case WSCONS_EVENT_TOUCH_WIDTH:
 	case WSCONS_EVENT_TOUCH_RESET:
 		/* ignore those */

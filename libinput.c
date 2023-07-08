@@ -99,6 +99,7 @@ struct libinput_event_pointer {
 	struct device_float_coords delta_raw;
 	struct device_coords absolute;
 	struct discrete_coords discrete;
+	struct wheel_v120 v120;
 	uint32_t button;
 	uint32_t seat_button_count;
 	enum libinput_button_state state;
@@ -242,6 +243,7 @@ libinput_event_get_pointer_event(struct libinput_event *event)
 			   LIBINPUT_EVENT_POINTER_MOTION,
 			   LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE,
 			   LIBINPUT_EVENT_POINTER_BUTTON,
+			   LIBINPUT_EVENT_POINTER_SCROLL_WHEEL,
 			   LIBINPUT_EVENT_POINTER_AXIS);
 
 	return (struct libinput_event_pointer *) event;
@@ -367,6 +369,7 @@ libinput_event_pointer_get_time(struct libinput_event_pointer *event)
 			   LIBINPUT_EVENT_POINTER_MOTION,
 			   LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE,
 			   LIBINPUT_EVENT_POINTER_BUTTON,
+			   LIBINPUT_EVENT_POINTER_SCROLL_WHEEL,
 			   LIBINPUT_EVENT_POINTER_AXIS);
 
 	return us2ms(event->time);
@@ -381,6 +384,7 @@ libinput_event_pointer_get_time_usec(struct libinput_event_pointer *event)
 			   LIBINPUT_EVENT_POINTER_MOTION,
 			   LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE,
 			   LIBINPUT_EVENT_POINTER_BUTTON,
+			   LIBINPUT_EVENT_POINTER_SCROLL_WHEEL,
 			   LIBINPUT_EVENT_POINTER_AXIS);
 
 	return event->time;
@@ -528,9 +532,14 @@ libinput_event_pointer_has_axis(struct libinput_event_pointer *event,
 	require_event_type(libinput_event_get_context(&event->base),
 			   event->base.type,
 			   0,
+			   LIBINPUT_EVENT_POINTER_SCROLL_WHEEL,
 			   LIBINPUT_EVENT_POINTER_AXIS);
 
-	/* Event type LIBINPUT_EVENT_POINTER_AXIS is unsupported. */
+	switch (axis) {
+	case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
+	case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
+		return !!(event->axes & bit(axis));
+	}
 	return 0;
 }
 
@@ -568,6 +577,62 @@ libinput_event_pointer_get_axis_source(struct libinput_event_pointer *event)
 
 	/* XXX impossible to return an error, so pick a source type. */
 	return LIBINPUT_POINTER_AXIS_SOURCE_WHEEL;
+}
+
+LIBINPUT_EXPORT double
+libinput_event_pointer_get_scroll_value(struct libinput_event_pointer *event,
+					enum libinput_pointer_axis axis)
+{
+	struct libinput *libinput = event->base.device->seat->libinput;
+	double value = 0;
+
+	require_event_type(libinput_event_get_context(&event->base),
+			   event->base.type,
+			   0.0,
+			   LIBINPUT_EVENT_POINTER_SCROLL_WHEEL,
+			   LIBINPUT_EVENT_POINTER_SCROLL_FINGER,
+			   LIBINPUT_EVENT_POINTER_SCROLL_CONTINUOUS);
+
+	if (!libinput_event_pointer_has_axis(event, axis)) {
+		log_bug_client(libinput, "value requested for unset axis\n");
+	} else {
+		switch (axis) {
+		case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
+			value = event->delta.x;
+			break;
+		case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
+			value = event->delta.y;
+			break;
+		}
+	}
+	return value;
+}
+
+LIBINPUT_EXPORT double
+libinput_event_pointer_get_scroll_value_v120(struct libinput_event_pointer *event,
+					     enum libinput_pointer_axis axis)
+{
+	struct libinput *libinput = event->base.device->seat->libinput;
+	double value = 0;
+
+	require_event_type(libinput_event_get_context(&event->base),
+			   event->base.type,
+			   0.0,
+			   LIBINPUT_EVENT_POINTER_SCROLL_WHEEL);
+
+	if (!libinput_event_pointer_has_axis(event, axis)) {
+		log_bug_client(libinput, "value requested for unset axis\n");
+	} else {
+		switch (axis) {
+		case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
+			value = event->v120.x;
+			break;
+		case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
+			value = event->v120.y;
+			break;
+		}
+	}
+	return value;
 }
 
 LIBINPUT_EXPORT uint32_t
@@ -1267,6 +1332,30 @@ keyboard_notify_key(struct libinput_device *device,
 	post_device_event(device, time,
 			  LIBINPUT_EVENT_KEYBOARD_KEY,
 			  &key_event->base);
+}
+
+void
+axis_notify_event(struct libinput_device *device,
+    uint64_t time,
+    const struct normalized_coords *delta,
+    const struct device_float_coords *raw)
+{
+	struct libinput_event_pointer *axis_event;
+
+	axis_event = zalloc(sizeof *axis_event);
+	if (!axis_event)
+		return;
+	
+	*axis_event = (struct libinput_event_pointer) {
+		.time = time,
+		.delta = *delta,
+		.delta_raw = *raw,
+		.source = LIBINPUT_POINTER_AXIS_SOURCE_WHEEL,
+		.axes = bit(LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL),
+	};
+		
+	post_device_event(device, time, LIBINPUT_EVENT_POINTER_SCROLL_WHEEL,
+	    &axis_event->base);
 }
 
 void
