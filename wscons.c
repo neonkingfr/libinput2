@@ -75,7 +75,7 @@ wscons_process(struct libinput_device *device, struct wscons_event *wsevent)
 		 * the left button value being 0 it will be
 		 * interpreted as an error.
 		 */
-		button = wsevent->value + 1;
+		button = wsevent->value + BTN_LEFT;
 		if (wsevent->type == WSCONS_EVENT_MOUSE_UP)
 			state = LIBINPUT_BUTTON_STATE_RELEASED;
 		else
