@@ -417,7 +417,7 @@ libinput_event_pointer_get_dx_unaccelerated(
 			   0,
 			   LIBINPUT_EVENT_POINTER_MOTION);
 
-	fprintf(stderr, "%s: partial stub\n", __func__);
+	// fprintf(stderr, "%s: partial stub\n", __func__);
 	return event->delta_raw.x;
 }
 
@@ -430,7 +430,7 @@ libinput_event_pointer_get_dy_unaccelerated(
 			   0,
 			   LIBINPUT_EVENT_POINTER_MOTION);
 
-	fprintf(stderr, "%s: partial stub\n", __func__);
+	// fprintf(stderr, "%s: partial stub\n", __func__);
 	return event->delta_raw.y;
 }
 
@@ -517,7 +517,7 @@ libinput_event_pointer_get_seat_button_count(
 			   0,
 			   LIBINPUT_EVENT_POINTER_BUTTON);
 
-	fprintf(stderr, "%s: partial stub\n", __func__);
+	// fprintf(stderr, "%s: partial stub\n", __func__);
 	return event->seat_button_count;
 }
 
