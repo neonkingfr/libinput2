@@ -9,7 +9,7 @@ NOPROFILE=
 LIB=		input
 
 PREFIX=		/usr/local
-INCSDIR=	${PREFIX}/include/
+INCSDIR=	${PREFIX}/include
 LIBDIR=		${PREFIX}/lib
 
 CPPFLAGS+=	-I${.CURDIR} \
