@@ -43,7 +43,8 @@ static int old_value = -1;
 static void
 wscons_process(struct libinput_device *device, struct wscons_event *wsevent)
 {
-	enum libinput_button_state state;
+	enum libinput_button_state bstate;
+	enum libinput_key_state kstate;
 	struct normalized_coords accel;
 	struct device_float_coords raw;
 	uint64_t time;
@@ -56,16 +57,17 @@ wscons_process(struct libinput_device *device, struct wscons_event *wsevent)
 	case WSCONS_EVENT_KEY_DOWN:
 		key = wsevent->value;
 		if (wsevent->type == WSCONS_EVENT_KEY_UP) {
-			state = LIBINPUT_KEY_STATE_RELEASED;
+			kstate = LIBINPUT_KEY_STATE_RELEASED;
 			old_value = -1;
 		} else {
-			state = LIBINPUT_KEY_STATE_PRESSED;
+			kstate = LIBINPUT_KEY_STATE_PRESSED;
 			/* ignore auto-repeat */
 			if (key == old_value)
 				return;
 			old_value = key;
 		}
-		keyboard_notify_key(device, time, wskey_transcode(key), state);
+		keyboard_notify_key(device, time,
+				    wskey_transcode(key), kstate);
 		break;
 
 	case WSCONS_EVENT_MOUSE_UP:
@@ -77,10 +79,10 @@ wscons_process(struct libinput_device *device, struct wscons_event *wsevent)
 		 */
 		button = wsevent->value + BTN_LEFT;
 		if (wsevent->type == WSCONS_EVENT_MOUSE_UP)
-			state = LIBINPUT_BUTTON_STATE_RELEASED;
+			bstate = LIBINPUT_BUTTON_STATE_RELEASED;
 		else
-			state = LIBINPUT_BUTTON_STATE_PRESSED;
-		pointer_notify_button(device, time, button, state);
+			bstate = LIBINPUT_BUTTON_STATE_PRESSED;
+		pointer_notify_button(device, time, button, bstate);
 		break;
 
 	case WSCONS_EVENT_MOUSE_DELTA_X:
