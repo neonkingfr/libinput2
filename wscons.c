@@ -105,14 +105,14 @@ wscons_process(struct libinput_device *device, struct wscons_event *wsevent)
 
 	case WSCONS_EVENT_HSCROLL:
 		memset(&raw, 0, sizeof(raw));
-		accel.x = wsevent->value;
+		accel.x = wsevent->value/8;
 		accel.y = 0;
 		axis_notify_event(device, time, &accel, &raw);
 		break;
 	case WSCONS_EVENT_VSCROLL:
 		memset(&raw, 0, sizeof(raw));
 		accel.x = 0;
-		accel.y = wsevent->value;
+		accel.y = wsevent->value/8;
 		axis_notify_event(device, time, &accel, &raw);
 		break;
 	      
